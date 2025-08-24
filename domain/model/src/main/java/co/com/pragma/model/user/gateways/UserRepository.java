@@ -10,9 +10,4 @@ public interface UserRepository {
 
     Flux<User> findAll();
 
-    Mono<User> findById(String id);
-
-    Mono<Void> delete(String id);
-
-    Mono<User> update(User user);
 }
