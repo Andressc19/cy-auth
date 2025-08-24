@@ -14,19 +14,5 @@ public class UserUseCase {
         return userRepository.save(user);
     }
 
-    public Mono<User> editUser(User user) {
-        return userRepository.update(user);
-    }
-
-    public Mono<Void> deleteUser(String id) {
-        return userRepository.delete(id);
-    }
-
-    public Mono<User> getUserById(String id) {
-        return userRepository.findById(id);
-    }
-
-    public Flux<User> getAllUsers() {
-        return userRepository.findAll();
-    }
+    public Flux<User> getAllUsers() { return userRepository.findAll(); }
 }
