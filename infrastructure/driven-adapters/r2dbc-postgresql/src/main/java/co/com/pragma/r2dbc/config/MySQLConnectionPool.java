@@ -1,39 +1,37 @@
 package co.com.pragma.r2dbc.config;
 
+import io.asyncer.r2dbc.mysql.MySqlConnectionConfiguration;
+import io.asyncer.r2dbc.mysql.MySqlConnectionFactory;
+import io.asyncer.r2dbc.mysql.constant.SslMode;
 import io.r2dbc.pool.ConnectionPool;
 import io.r2dbc.pool.ConnectionPoolConfiguration;
 import io.r2dbc.spi.ConnectionFactory;
-import org.mariadb.r2dbc.MariadbConnectionConfiguration;
-import org.mariadb.r2dbc.MariadbConnectionFactory;
-import org.mariadb.r2dbc.SslMode;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.time.Duration;
 
 @Configuration
-public class MariadbSQLConnectionPool {
+public class MySQLConnectionPool {
     public static final int INITIAL_SIZE = 12;
     public static final int MAX_SIZE = 15;
     public static final int MAX_IDLE_TIME = 30;
 
     @Bean
-    public ConnectionPool getConnectionConfig(MariadbConnectionProperties properties) {
-        MariadbConnectionConfiguration dbConfiguration = MariadbConnectionConfiguration.builder()
+    public ConnectionPool getConnectionConfig(MySQLConnectionProperties properties) {
+        MySqlConnectionConfiguration dbConfiguration = MySqlConnectionConfiguration.builder()
               .host(properties.host())
               .port(properties.port())
               .database(properties.database())
               .username(properties.username())
               .password(properties.password())
-              .sslMode(SslMode.DISABLE)
-              .allowMultiQueries(true)
+              .sslMode(SslMode.PREFERRED)
               .build();
 
-        ConnectionFactory connectionFactory = new MariadbConnectionFactory(dbConfiguration);
+        ConnectionFactory connectionFactory = MySqlConnectionFactory.from(dbConfiguration);
 
         ConnectionPoolConfiguration poolConfiguration = ConnectionPoolConfiguration.builder()
               .connectionFactory(connectionFactory)
-              .name("api-mariadb-connection-pool")
               .initialSize(INITIAL_SIZE)
               .maxSize(MAX_SIZE)
               .maxIdleTime(Duration.ofMinutes(MAX_IDLE_TIME))

@@ -3,7 +3,7 @@ package co.com.pragma.r2dbc.config;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "adapters.r2dbc")
-public record MariadbConnectionProperties(
+public record MySQLConnectionProperties(
         String host,
         Integer port,
         String database,
