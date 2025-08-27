@@ -22,4 +22,5 @@ public class UserValidator {
             throw new InvalidSalaryException(baseSalary);
         }
     }
+    
 }

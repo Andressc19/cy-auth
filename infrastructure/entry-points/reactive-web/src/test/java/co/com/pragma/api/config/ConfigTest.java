@@ -2,9 +2,13 @@ package co.com.pragma.api.config;
 
 import co.com.pragma.api.UserHandler;
 import co.com.pragma.api.UserRouterRest;
+import co.com.pragma.usecase.user.CreateUserUseCase;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -16,6 +20,15 @@ class ConfigTest {
 
     @Autowired
     private WebTestClient webTestClient;
+    
+    @Configuration
+    static class TestUseCaseConfig {
+        
+        @Bean
+        public CreateUserUseCase createUserUseCase() {
+            return Mockito.mock(CreateUserUseCase.class);
+        }
+    }
 
     @Test
     void corsConfigurationShouldAllowOrigins() {

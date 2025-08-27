@@ -25,6 +25,13 @@ public class UserValidatorTest {
         user.setBaseSalary(new BigDecimal("-1000000"));
         assertThrows(InvalidSalaryException.class, () -> UserValidator.validate(user));
     }
+    
+    @Test
+    public void mustFailOverSalary () {
+        User user = new User();
+        user.setBaseSalary(new BigDecimal("20000000"));
+        assertThrows(InvalidSalaryException.class, () -> UserValidator.validate(user));
+    }
 
     @Test
     public void mustFailSalaryNull () {

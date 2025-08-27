@@ -16,19 +16,19 @@ import reactor.core.publisher.Mono;
 @Component
 @RequiredArgsConstructor
 public class UserHandler {
-
-    private final CreateUserUseCase createUserUseCase;
-    private final UserMapper userMapper;
-    private final RequestValidator jakartaValidator;
-
-    public Mono<ServerResponse> createUser(ServerRequest request) {
-        return request.bodyToMono(CreateUserRequest.class)
-              .flatMap(jakartaValidator::validate)
-              .map(userMapper::toDomain)
-              .flatMap(createUserUseCase::execute)
-              .map(userMapper::toDto)
-              .doOnSuccess(dto -> log.info("Created user successfully: {}", dto))
-              .flatMap(dto -> ServerResponse.status(HttpStatus.CREATED).bodyValue(dto))
-              .doOnError(e -> log.error("Error creating user"));
-    }
+	
+	private final CreateUserUseCase createUserUseCase;
+	private final UserMapper userMapper;
+	private final RequestValidator jakartaValidator;
+	
+	public Mono<ServerResponse> createUser(ServerRequest request) {
+		return request.bodyToMono(CreateUserRequest.class)
+			.doOnNext(req -> log.info("Attempting to create user: {}", req.email()))
+			.flatMap(jakartaValidator::validate)
+			.map(userMapper::toDomain)
+			.flatMap(createUserUseCase::execute)
+			.map(userMapper::toDto)
+			.doOnNext(user -> log.info("Created user successfully: {}", user))
+			.flatMap(dto -> ServerResponse.status(HttpStatus.CREATED).bodyValue(dto));
+	}
 }
