@@ -14,12 +14,11 @@ public class CreateUserUseCase {
     private final UserRepository userRepository;
 
     public Mono<User> execute(User user) {
-        return userRepository.existsByEmail(user.getEmail())
-              .doOnNext(s -> UserValidator.validate(user))
-              .flatMap(exists -> {
-                  if (exists)
-                      return Mono.error(new DuplicatedEmailException(user.getEmail()));
-                  return userRepository.saveUser(user);
-              });
+        user.setEmail(user.getEmail().toLowerCase());
+        UserValidator.validate(user);
+        return userRepository.existsByEmail(user.getEmail()).flatMap(exists -> {
+            if (exists) return Mono.error(new DuplicatedEmailException(user.getEmail()));
+            return userRepository.saveUser(user);
+        });
     }
 }
