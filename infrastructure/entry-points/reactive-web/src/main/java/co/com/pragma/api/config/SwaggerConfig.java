@@ -8,11 +8,10 @@ import io.swagger.v3.oas.annotations.info.Info;
 @Configuration
 @OpenAPIDefinition(
       info = @Info(
-            title = "CY API",
+            title = "CY API ",
             version = "1.0.0",
-            description = "API for managing personal loan application",
+            description = "Microservice to managing users loan request  API",
             contact = @Contact(name = "Andres Camperos")
       )
 )
-public class SwaggerConfig {
-}
+public class SwaggerConfig {}

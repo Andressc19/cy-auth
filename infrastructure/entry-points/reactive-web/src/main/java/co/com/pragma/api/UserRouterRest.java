@@ -1,6 +1,12 @@
 package co.com.pragma.api;
 
+import co.com.pragma.api.dto.request.CreateUserRequest;
+import co.com.pragma.api.dto.response.CreateUserResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springdoc.core.annotations.RouterOperation;
 import org.springdoc.core.annotations.RouterOperations;
@@ -23,33 +29,28 @@ public class UserRouterRest {
     @RouterOperations({
           @RouterOperation(
                 path = API_PATH + "/usuarios",
-                method = RequestMethod.GET,
-                beanClass = UserHandler.class,
-                beanMethod = "getAllUsers",
-                operation = @Operation(
-                      operationId = "getAllUsers",
-                      summary = "Get all users",
-                      responses = {
-                            @ApiResponse(responseCode = "200", description = "OK")
-                      }
-                )
-          ),
-          @RouterOperation(
-                path = API_PATH + "/usuarios",
-                method = RequestMethod.POST,
                 beanClass = UserHandler.class,
                 beanMethod = "createUser",
+                method = RequestMethod.POST,
                 operation = @Operation(
                       operationId = "createUser",
-                      summary = "Create a new user",
+                      summary = "Crea un nuevo usuario",
+                      requestBody = @RequestBody(
+                            required = true,
+                            content = @Content(
+                                  schema = @Schema(implementation = CreateUserRequest.class)
+                            )
+                      ),
                       responses = {
-                            @ApiResponse(responseCode = "201", description = "Created")
+                            @ApiResponse(responseCode = "201", description = "Usuario creado", content = @Content(schema = @Schema(implementation = CreateUserResponse.class))),
+                            @ApiResponse(responseCode = "400", description = "Error de validación"),
+                            @ApiResponse(responseCode = "500", description = "Error interno")
                       }
                 )
           )
     })
     public RouterFunction<ServerResponse> routerFunction(UserHandler handler) {
-        return route(GET(API_PATH + "/usuarios"), handler::getAllUsers)
-              .andRoute(POST(API_PATH + "/usuarios"), handler::createUser);
+        return route(POST(API_PATH + "/usuarios"), handler::createUser)
+              .filter((request, next) -> next.handle(request));
     }
 }
