@@ -1,37 +1,41 @@
 package co.com.pragma.r2dbc.config;
 
-import io.asyncer.r2dbc.mysql.MySqlConnectionConfiguration;
-import io.asyncer.r2dbc.mysql.MySqlConnectionFactory;
-import io.asyncer.r2dbc.mysql.constant.SslMode;
+import co.com.pragma.r2dbc.config.PostgresSQLConnectionProperties;
 import io.r2dbc.pool.ConnectionPool;
 import io.r2dbc.pool.ConnectionPoolConfiguration;
-import io.r2dbc.spi.ConnectionFactory;
+import io.r2dbc.postgresql.PostgresqlConnectionConfiguration;
+import io.r2dbc.postgresql.PostgresqlConnectionFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.time.Duration;
 
+@Slf4j
 @Configuration
-public class MySQLConnectionPool {
+public class PostgresSQLConnectionPool {
+    /* Change these values for your project */
     public static final int INITIAL_SIZE = 12;
     public static final int MAX_SIZE = 15;
     public static final int MAX_IDLE_TIME = 30;
+    public static final int DEFAULT_PORT = 5432;
 
     @Bean
-    public ConnectionPool getConnectionConfig(MySQLConnectionProperties properties) {
-        MySqlConnectionConfiguration dbConfiguration = MySqlConnectionConfiguration.builder()
+    public ConnectionPool getConnectionConfig(PostgresSQLConnectionProperties properties) {
+        log.info("Conectando a Postgres R2DBC en {}:{}/{} con usuario {}",
+              properties.host(), properties.port(), properties.database(), properties.username());
+        PostgresqlConnectionConfiguration dbConfiguration = PostgresqlConnectionConfiguration.builder()
               .host(properties.host())
               .port(properties.port())
               .database(properties.database())
+              .schema(properties.schema())
               .username(properties.username())
               .password(properties.password())
-              .sslMode(SslMode.PREFERRED)
               .build();
 
-        ConnectionFactory connectionFactory = MySqlConnectionFactory.from(dbConfiguration);
-
         ConnectionPoolConfiguration poolConfiguration = ConnectionPoolConfiguration.builder()
-              .connectionFactory(connectionFactory)
+              .connectionFactory(new PostgresqlConnectionFactory(dbConfiguration))
+              .name("api-postgres-connection-pool")
               .initialSize(INITIAL_SIZE)
               .maxSize(MAX_SIZE)
               .maxIdleTime(Duration.ofMinutes(MAX_IDLE_TIME))

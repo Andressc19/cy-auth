@@ -1,5 +1,7 @@
 server:
   port: 8080
+  error:
+    include-message: never
 spring:
   application:
     name: "cy-auth"
@@ -15,10 +17,10 @@ adapters:
   r2dbc:
     host: ${DB_HOST}
     port: ${DB_PORT}
-    database: ${MYSQL_DATABASE}
+    database: ${POSTGRES_DB}
     schema: ${DB_SCHEMA}
-    username: ${MYSQL_USER}
-    password: ${MYSQL_PASSWORD}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
 
 management:
   endpoints:
@@ -31,3 +33,8 @@ management:
         enabled: true
 cors:
   allowed-origins: "http://localhost:4200,http://localhost:8080"
+
+logging:
+  level:
+    org.springframework.boot.autoconfigure.web.reactive.error.AbstractErrorWebExceptionHandler: OFF
+    org.springframework.web.server.adapter.HttpWebHandlerAdapter: ERROR

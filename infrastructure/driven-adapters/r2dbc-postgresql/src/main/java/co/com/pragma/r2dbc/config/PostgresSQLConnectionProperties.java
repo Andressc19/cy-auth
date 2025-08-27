@@ -3,7 +3,7 @@ package co.com.pragma.r2dbc.config;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "adapters.r2dbc")
-public record MySQLConnectionProperties(
+public record PostgresSQLConnectionProperties(
         String host,
         Integer port,
         String database,
