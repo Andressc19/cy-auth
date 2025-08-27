@@ -1,5 +1,9 @@
 package co.com.pragma.r2dbc.entity;
 
+import jakarta.persistence.Entity;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
@@ -10,15 +14,18 @@ import java.time.LocalDate;
 
 @Table(name = "usuarios")
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
 public class UserEntity {
     @Id
     @Column("id_usuario")
     private Long id;
 
-    @Column("nombre")
+    @Column("nombres")
     private String firstName;
 
-    @Column("apellido")
+    @Column("apellidos")
     private String lastName;
 
     @Column("email")
@@ -34,5 +41,5 @@ public class UserEntity {
     private String address;
 
     @Column("salario_base")
-    private BigDecimal salaryBase;
+    private BigDecimal baseSalary;
 }

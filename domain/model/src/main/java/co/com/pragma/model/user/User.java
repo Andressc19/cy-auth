@@ -1,16 +1,14 @@
 package co.com.pragma.model.user;
-import lombok.Builder;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
 
+import co.com.pragma.model.user.exceptions.InvalidSalaryException;
+import lombok.*;
+
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
-
-@Getter
-@Setter
+@Data
+@NoArgsConstructor
 @AllArgsConstructor
-@Builder(toBuilder = true)
 public class User {
     private Long id;
     private String firstName;
@@ -19,4 +17,5 @@ public class User {
     private String email;
     private String address;
     private String phone;
+    private BigDecimal baseSalary;
 }
