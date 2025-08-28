@@ -17,6 +17,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
 
@@ -35,7 +36,7 @@ class UserRouterRestTest {
 	@Autowired
 	private WebTestClient webTestClient;
 	
-	@Autowired
+	@MockitoBean
 	private CreateUserUseCase createUserUseCase;
 	
 	@Autowired
@@ -94,7 +95,6 @@ class UserRouterRestTest {
 			user.getEmail(),
 			user.getBaseSalary()
 		);
-	
 		
 		when(jakartaValidator.validate(any(CreateUserRequest.class)))
 			.thenAnswer(invocation -> Mono.just(invocation.getArgument(0)));

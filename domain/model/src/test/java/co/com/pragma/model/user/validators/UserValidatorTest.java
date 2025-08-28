@@ -11,30 +11,35 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 public class UserValidatorTest {
-
+    
     @Test
-    public void mustSuccessSalary () {
+    void dummyTest() {
+        System.out.println("JUnit is running!");
+    }
+    
+    @Test
+    void mustSuccessSalary () {
         User user = new User();
         user.setBaseSalary(new BigDecimal("100000"));
         assertDoesNotThrow(() -> UserValidator.validate(user));
     }
 
     @Test
-    public void mustFailNegativeSalary () {
+    void mustFailNegativeSalary () {
         User user = new User();
         user.setBaseSalary(new BigDecimal("-1000000"));
         assertThrows(InvalidSalaryException.class, () -> UserValidator.validate(user));
     }
     
     @Test
-    public void mustFailOverSalary () {
+    void mustFailOverSalary () {
         User user = new User();
         user.setBaseSalary(new BigDecimal("20000000"));
         assertThrows(InvalidSalaryException.class, () -> UserValidator.validate(user));
     }
 
     @Test
-    public void mustFailSalaryNull () {
+   void mustFailSalaryNull () {
         User user = new User();
         user.setBaseSalary(null);
         assertThrows(InvalidSalaryException.class, () -> UserValidator.validate(user));
