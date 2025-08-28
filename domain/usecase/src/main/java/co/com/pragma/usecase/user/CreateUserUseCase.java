@@ -19,10 +19,9 @@ public class CreateUserUseCase implements ICreateUserUserCase{
             UserValidator.validate(user);
             
             return userRepository.existsByEmail(user.getEmail())
-                .flatMap(exists -> {
-                    if (exists) return Mono.error(new DuplicatedEmailException(user.getEmail()));
-                    return userRepository.saveUser(user);
-                });
+                .filter(exists -> !exists)
+                .switchIfEmpty(Mono.error(new DuplicatedEmailException(user.getEmail())))
+                .then(userRepository.saveUser(user));
         });
     }
 
