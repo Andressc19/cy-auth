@@ -26,7 +26,11 @@ public class UserHandler {
 			.doOnNext(req -> log.info("Attempting to create user: {}", req.email()))
 			.flatMap(jakartaValidator::validate)
 			.map(userMapper::toDomain)
-			.flatMap(createUserUseCase::execute)
+			.flatMap(createUserUseCase::createUser)
+			.flatMap(user -> {
+				log.info("Checking role: {}", user);
+				return Mono.just(user);
+			} )
 			.map(userMapper::toDto)
 			.doOnNext(user -> log.info("Created user successfully: {}", user))
 			.flatMap(dto -> ServerResponse.status(HttpStatus.CREATED).bodyValue(dto));

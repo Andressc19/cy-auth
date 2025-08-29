@@ -1,6 +1,7 @@
 package co.com.pragma.api.dto.request;
 
 import co.com.pragma.api.decorators.ValidBirthDate;
+import co.com.pragma.api.decorators.ValidIdentificationNumber;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -19,7 +20,12 @@ public record CreateUserRequest(
       @NotBlank(message = "Debe ingresar un apellido válido")
       @Schema(description = "Apellido del usuario", example = "Doe")
       String lastName,
-
+      
+      @NotBlank(message = "Debe ingresar un número de identificación válido")
+      @Schema(description = "numero de identificación")
+      @ValidIdentificationNumber
+      String identificationNumber,
+      
       @ValidBirthDate
       @Schema(description = "Fecha de nacimiento", example = "1995-08-24")
       String birthDate,
@@ -41,5 +47,8 @@ public record CreateUserRequest(
       @DecimalMin(value = "0", message = "El salario mínimo es 0")
       @DecimalMax(value = "15000000", message = "El salario máximo es 15000000")
       @Schema(description = "Salario base", example = "2500000")
-      BigDecimal baseSalary
+      BigDecimal baseSalary,
+      
+      @NotNull(message = "Debe ingresar un rol valida")
+      Short role
 ) {}

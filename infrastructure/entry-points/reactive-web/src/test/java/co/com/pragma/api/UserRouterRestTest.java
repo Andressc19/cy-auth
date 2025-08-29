@@ -5,6 +5,8 @@ import co.com.pragma.api.dto.response.CreateUserResponse;
 import co.com.pragma.api.mappers.UserMapper;
 import co.com.pragma.api.validators.RequestValidator;
 import co.com.pragma.model.user.User;
+import co.com.pragma.model.userrole.UserRole;
+import co.com.pragma.usecase.getuserroleusecase.GetUserRoleUseCase;
 import co.com.pragma.usecase.user.CreateUserUseCase;
 import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.Assertions;
@@ -44,12 +46,19 @@ class UserRouterRestTest {
 	
 	@Autowired
 	private RequestValidator jakartaValidator;
-
+	@Autowired
+	private GetUserRoleUseCase getUserRoleUseCase;
+	
 	@TestConfiguration
 	static class TestConfig {
 		@Bean
 		public CreateUserUseCase createUserUseCase() {
 			return Mockito.mock(CreateUserUseCase.class);
+		}
+		
+		@Bean
+		public GetUserRoleUseCase getUserRoleUseCase() {
+			return Mockito.mock(GetUserRoleUseCase.class);
 		}
 		
 		@Bean
@@ -66,6 +75,12 @@ class UserRouterRestTest {
 	@Test
 	void createUserShouldReturnCreatedUser() {
 		
+		UserRole userRole = UserRole.builder()
+			.id(Short.parseShort("1"))
+			.name("CLIENTE")
+			.description("Descripcion cliente")
+			.build();
+		
 		User user = User.builder()
 			.firstName("John")
 			.lastName("Doe")
@@ -74,26 +89,31 @@ class UserRouterRestTest {
 			.phone("3001234567")
 			.email("johndoe@mail.com")
 			.baseSalary(new BigDecimal("2500000"))
+			.role(userRole)
 			.build();
 		
 		CreateUserRequest request = new CreateUserRequest(
 			user.getFirstName(),
 			user.getLastName(),
+			user.getIdentificationNumber(),
 			user.getBirthDate().toString(),
 			user.getAddress(),
 			user.getPhone(),
 			user.getEmail(),
-			user.getBaseSalary()
+			user.getBaseSalary(),
+			user.getRole().getId()
 		);
 		
 		CreateUserResponse responseDto = new CreateUserResponse(
 			user.getFirstName(),
 			user.getLastName(),
 			user.getBirthDate(),
+			user.getIdentificationNumber(),
 			user.getAddress(),
 			user.getPhone(),
 			user.getEmail(),
-			user.getBaseSalary()
+			user.getBaseSalary(),
+			userRole.getId()
 		);
 		
 		when(jakartaValidator.validate(any(CreateUserRequest.class)))
@@ -102,7 +122,10 @@ class UserRouterRestTest {
 		when(userMapper.toDomain(request))
 			.thenReturn(user);
 		
-		when(createUserUseCase.execute(any(User.class)))
+		when(getUserRoleUseCase.getUserRoleById(any(Short.class)))
+			.thenReturn(Mono.just(userRole));
+		
+		when(createUserUseCase.createUser(any(User.class)))
 			.thenReturn(Mono.just(user));
 		
 		when(userMapper.toDto(user))

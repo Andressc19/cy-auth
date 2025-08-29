@@ -41,7 +41,7 @@ public class CreateUserUseCaseTest {
 		when(userRepository.existsByEmail(user.getEmail())).thenReturn(Mono.just(false));
 		when(userRepository.saveUser(user)).thenReturn(Mono.just(user));
 		
-		StepVerifier.create(createUserUseCase.execute(user))
+		StepVerifier.create(createUserUseCase.createUser(user))
 			.expectNextMatches(saved ->
 				saved.getEmail().equals("valid@email.com") &&
 					saved.getBaseSalary().equals(new BigDecimal("2000000"))
@@ -64,7 +64,7 @@ public class CreateUserUseCaseTest {
 		when(userRepository.existsByEmail(user.getEmail()))
 			.thenReturn(Mono.just(true));
 		
-		StepVerifier.create(createUserUseCase.execute(user))
+		StepVerifier.create(createUserUseCase.createUser(user))
 			.expectErrorMatches(error -> error instanceof DuplicatedEmailException &&
 				error.getMessage().contains("email@email.com"))
 			.verify();
@@ -85,7 +85,7 @@ public class CreateUserUseCaseTest {
 		when(userRepository.existsByEmail(user.getEmail()))
 			.thenReturn(Mono.just(false));
 		
-		StepVerifier.create(createUserUseCase.execute(user))
+		StepVerifier.create(createUserUseCase.createUser(user))
 			.expectErrorMatches(error -> error instanceof InvalidSalaryException &&
 				error.getMessage().contains("Salary must be between 0 and 15000000"))
 			.verify();

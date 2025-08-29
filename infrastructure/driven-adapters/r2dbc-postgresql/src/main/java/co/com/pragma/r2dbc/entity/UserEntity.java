@@ -1,6 +1,7 @@
 package co.com.pragma.r2dbc.entity;
 
-import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,12 +13,13 @@ import lombok.Builder;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-@Table(name = "usuarios")
+@Table(name = "usuario")
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 public class UserEntity {
+    
     @Id
     @Column("id_usuario")
     private Long id;
@@ -27,6 +29,9 @@ public class UserEntity {
 
     @Column("apellidos")
     private String lastName;
+    
+    @Column("documento_identidad")
+    private String identificationNumber;
 
     @Column("email")
     private String email;
@@ -42,4 +47,8 @@ public class UserEntity {
 
     @Column("salario_base")
     private BigDecimal baseSalary;
+    
+    @Column("id_rol")
+    private Short roleId;
+    
 }

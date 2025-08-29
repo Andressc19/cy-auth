@@ -7,8 +7,10 @@ public record CreateUserResponse(
       String firstName,
       String lastName,
       LocalDate birthDate,
+	  String identificationNumber,
       String address,
       String phone,
       String email,
-      BigDecimal baseSalary
+      BigDecimal baseSalary,
+	  Short roleId
 ) {}

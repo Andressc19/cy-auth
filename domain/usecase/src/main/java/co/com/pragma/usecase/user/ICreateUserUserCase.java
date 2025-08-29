@@ -4,5 +4,5 @@ import co.com.pragma.model.user.User;
 import reactor.core.publisher.Mono;
 
 public interface ICreateUserUserCase {
-	Mono<User> execute(User user);
+	Mono<User> createUser(User user);
 }
