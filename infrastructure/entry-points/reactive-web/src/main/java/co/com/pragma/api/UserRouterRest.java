@@ -3,7 +3,6 @@ package co.com.pragma.api;
 import co.com.pragma.api.dto.request.CreateUserRequest;
 import co.com.pragma.api.dto.response.CreateUserResponse;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
-import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
 import static org.springframework.web.reactive.function.server.RequestPredicates.POST;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 
@@ -50,7 +48,7 @@ public class UserRouterRest {
           )
     })
     public RouterFunction<ServerResponse> routerFunction(UserHandler handler) {
-        return route(POST(API_PATH + "/usuarios"), handler::createUser)
+        return route(POST(API_PATH + "/usuarios"), handler::listenPOSTCreateUSer)
               .filter((request, next) -> next.handle(request));
     }
 }

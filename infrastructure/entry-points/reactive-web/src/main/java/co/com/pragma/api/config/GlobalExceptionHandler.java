@@ -2,7 +2,7 @@ package co.com.pragma.api.config;
 
 import java.util.Map;
 
-import co.com.pragma.api.validators.GlobalErrorAttributes;
+import co.com.pragma.api.exceptions.GlobalErrorAttributes;
 import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.autoconfigure.web.reactive.error.AbstractErrorWebExceptionHandler;
 import org.springframework.boot.web.error.ErrorAttributeOptions;

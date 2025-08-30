@@ -1,6 +1,5 @@
-package co.com.pragma.api.validators;
+package co.com.pragma.api.exceptions;
 
-import co.com.pragma.api.exceptions.JakartaValidationException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;

@@ -8,9 +8,9 @@ import io.swagger.v3.oas.annotations.info.Info;
 @Configuration
 @OpenAPIDefinition(
       info = @Info(
-            title = "CY API ",
+            title = "CY Autenticación",
             version = "1.0.0",
-            description = "Microservice to managing users loan request  API",
+            description = "Microservicio para el manejo de usuarios",
             contact = @Contact(name = "Andres Camperos")
       )
 )

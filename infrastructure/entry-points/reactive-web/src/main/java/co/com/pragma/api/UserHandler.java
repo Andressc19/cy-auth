@@ -2,7 +2,7 @@ package co.com.pragma.api;
 
 import co.com.pragma.api.dto.request.CreateUserRequest;
 import co.com.pragma.api.mappers.UserMapper;
-import co.com.pragma.api.validators.RequestValidator;
+import co.com.pragma.api.exceptions.RequestValidator;
 import co.com.pragma.usecase.user.CreateUserUseCase;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +21,7 @@ public class UserHandler {
 	private final UserMapper userMapper;
 	private final RequestValidator jakartaValidator;
 	
-	public Mono<ServerResponse> createUser(ServerRequest request) {
+	public Mono<ServerResponse> listenPOSTCreateUSer(ServerRequest request) {
 		return request.bodyToMono(CreateUserRequest.class)
 			.doOnNext(req -> log.info("Attempting to create user: {}", req.email()))
 			.flatMap(jakartaValidator::validate)

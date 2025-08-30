@@ -1,7 +1,6 @@
-package co.com.pragma.api.validators;
+package co.com.pragma.api.exceptions;
 
 import co.com.pragma.api.enums.ErrorCodes;
-import co.com.pragma.api.exceptions.JakartaValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.stereotype.Component;
