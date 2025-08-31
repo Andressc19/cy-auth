@@ -22,7 +22,7 @@ public record CreateUserRequest(
       String lastName,
       
       @NotBlank(message = "Debe ingresar un número de identificación válido")
-      @Schema(description = "numero de identificación")
+      @Schema(description = "Número de identificación", example = "1234567880")
       @ValidIdentificationNumber
       String identificationNumber,
       
