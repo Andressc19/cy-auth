@@ -17,7 +17,7 @@ public class CreateUserUseCase implements ICreateUserUserCase{
     private final UserRoleRepository userRoleRepository;
     
     
-    public Mono<User> createUser(User user) {
+    public Mono<User> execute(User user) {
         return Mono.defer(()-> {
             user.setEmail(user.getEmail().toLowerCase());
             UserValidator.validate(user);

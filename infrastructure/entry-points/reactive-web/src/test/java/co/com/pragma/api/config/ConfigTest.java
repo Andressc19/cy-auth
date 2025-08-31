@@ -1,7 +1,7 @@
 package co.com.pragma.api.config;
 
-import co.com.pragma.api.UserHandler;
-import co.com.pragma.api.UserRouterRest;
+import co.com.pragma.api.handlers.UserHandler;
+import co.com.pragma.api.routers.UserRouterRest;
 import co.com.pragma.usecase.user.CreateUserUseCase;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

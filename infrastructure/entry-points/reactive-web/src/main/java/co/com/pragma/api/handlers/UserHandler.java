@@ -1,9 +1,9 @@
-package co.com.pragma.api;
+package co.com.pragma.api.handlers;
 
 import co.com.pragma.api.dto.request.CreateUserRequest;
 import co.com.pragma.api.mappers.UserMapper;
 import co.com.pragma.api.exceptions.RequestValidator;
-import co.com.pragma.usecase.user.CreateUserUseCase;
+import co.com.pragma.usecase.user.ICreateUserUserCase;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -17,7 +17,7 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class UserHandler {
 	
-	private final CreateUserUseCase createUserUseCase;
+	private final ICreateUserUserCase createUserUseCase;
 	private final UserMapper userMapper;
 	private final RequestValidator jakartaValidator;
 	
@@ -26,7 +26,7 @@ public class UserHandler {
 			.doOnNext(req -> log.info("Attempting to create user: {}", req.email()))
 			.flatMap(jakartaValidator::validate)
 			.map(userMapper::toDomain)
-			.flatMap(createUserUseCase::createUser)
+			.flatMap(createUserUseCase::execute)
 			.flatMap(user -> {
 				log.info("Checking role: {}", user);
 				return Mono.just(user);

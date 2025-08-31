@@ -7,6 +7,7 @@ import co.com.pragma.r2dbc.helper.ReactiveAdapterOperations;
 import lombok.extern.slf4j.Slf4j;
 import org.reactivecommons.utils.ObjectMapper;
 import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Slf4j
@@ -14,9 +15,13 @@ import reactor.core.publisher.Mono;
 public class UserRoleReactiveRepositoryAdapter extends ReactiveAdapterOperations
       <UserRole, UserRoleEntity, Short, UserRoleReactiveRepository> implements UserRoleRepository {
 
-
     public UserRoleReactiveRepositoryAdapter(UserRoleReactiveRepository repository, ObjectMapper mapper) {
         super(repository, mapper, d -> mapper.map(d, UserRole.class));
+    }
+    
+    @Override
+    public Flux<UserRole> getAllUserRoles() {
+        return findAll();
     }
     
     @Override

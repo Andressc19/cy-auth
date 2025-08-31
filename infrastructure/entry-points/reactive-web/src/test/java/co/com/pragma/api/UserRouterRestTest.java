@@ -2,12 +2,16 @@ package co.com.pragma.api;
 
 import co.com.pragma.api.dto.request.CreateUserRequest;
 import co.com.pragma.api.dto.response.CreateUserResponse;
+import co.com.pragma.api.handlers.UserHandler;
 import co.com.pragma.api.mappers.UserMapper;
 import co.com.pragma.api.exceptions.RequestValidator;
+import co.com.pragma.api.routers.UserRouterRest;
 import co.com.pragma.model.user.User;
 import co.com.pragma.model.userrole.UserRole;
-import co.com.pragma.usecase.getuserroleusecase.GetUserRoleUseCase;
+import co.com.pragma.usecase.getuserroleusecase.GetUserRoleByIdUseCase;
+import co.com.pragma.usecase.getuserroleusecase.IGetUserRoleByIdUseCase;
 import co.com.pragma.usecase.user.CreateUserUseCase;
+import co.com.pragma.usecase.user.ICreateUserUserCase;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -45,18 +49,18 @@ class UserRouterRestTest {
 	@Autowired
 	private RequestValidator jakartaValidator;
 	@Autowired
-	private GetUserRoleUseCase getUserRoleUseCase;
+	private GetUserRoleByIdUseCase getUserRoleUseCase;
 	
 	@TestConfiguration
 	static class TestConfig {
 		@Bean
-		public CreateUserUseCase createUserUseCase() {
-			return Mockito.mock(CreateUserUseCase.class);
+		public ICreateUserUserCase createUserUseCase() {
+			return Mockito.mock(ICreateUserUserCase.class);
 		}
 		
 		@Bean
-		public GetUserRoleUseCase getUserRoleUseCase() {
-			return Mockito.mock(GetUserRoleUseCase.class);
+		public IGetUserRoleByIdUseCase getUserRoleUseCase() {
+			return Mockito.mock(GetUserRoleByIdUseCase.class);
 		}
 		
 		@Bean
@@ -120,10 +124,10 @@ class UserRouterRestTest {
 		when(userMapper.toDomain(request))
 			.thenReturn(user);
 		
-		when(getUserRoleUseCase.getUserRoleById(any(Short.class)))
+		when(getUserRoleUseCase.execute(any(Short.class)))
 			.thenReturn(Mono.just(userRole));
 		
-		when(createUserUseCase.createUser(any(User.class)))
+		when(createUserUseCase.execute(any(User.class)))
 			.thenReturn(Mono.just(user));
 		
 		when(userMapper.toDto(user))

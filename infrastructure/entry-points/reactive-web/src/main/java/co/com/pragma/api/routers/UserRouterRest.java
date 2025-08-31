@@ -1,7 +1,9 @@
-package co.com.pragma.api;
+package co.com.pragma.api.routers;
 
+import co.com.pragma.api.constants.ApiConstants;
 import co.com.pragma.api.dto.request.CreateUserRequest;
 import co.com.pragma.api.dto.response.CreateUserResponse;
+import co.com.pragma.api.handlers.UserHandler;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -21,14 +23,12 @@ import static org.springframework.web.reactive.function.server.RouterFunctions.r
 @Configuration
 public class UserRouterRest {
 
-    private static final String API_PATH = "/api/v1";
-
     @Bean
     @RouterOperations({
           @RouterOperation(
-                path = API_PATH + "/usuarios",
+                path = ApiConstants.USER_PATH,
                 beanClass = UserHandler.class,
-                beanMethod = "createUser",
+                beanMethod = "listenPOSTCreateUSer",
                 method = RequestMethod.POST,
                 operation = @Operation(
                       operationId = "createUser",
@@ -40,15 +40,16 @@ public class UserRouterRest {
                             )
                       ),
                       responses = {
-                            @ApiResponse(responseCode = "201", description = "Usuario creado", content = @Content(schema = @Schema(implementation = CreateUserResponse.class))),
+                            @ApiResponse(responseCode = "201", description = "Usuario creado",
+                                content = @Content(schema = @Schema(implementation = CreateUserResponse.class))),
                             @ApiResponse(responseCode = "400", description = "Error de validación"),
                             @ApiResponse(responseCode = "500", description = "Error interno")
                       }
                 )
           )
     })
-    public RouterFunction<ServerResponse> routerFunction(UserHandler handler) {
-        return route(POST(API_PATH + "/usuarios"), handler::listenPOSTCreateUSer)
+    public RouterFunction<ServerResponse> userRouterFunction(UserHandler handler) {
+        return route(POST(ApiConstants.USER_PATH), handler::listenPOSTCreateUSer)
               .filter((request, next) -> next.handle(request));
     }
 }
