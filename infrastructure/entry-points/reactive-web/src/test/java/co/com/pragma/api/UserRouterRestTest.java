@@ -8,11 +8,10 @@ import co.com.pragma.api.exceptions.RequestValidator;
 import co.com.pragma.api.routers.UserRouterRest;
 import co.com.pragma.model.user.User;
 import co.com.pragma.model.userrole.UserRole;
-import co.com.pragma.usecase.getuserroleusecase.GetUserRoleByIdUseCase;
-import co.com.pragma.usecase.getuserroleusecase.IGetUserRoleByIdUseCase;
 import co.com.pragma.usecase.user.CreateUserUseCase;
 import co.com.pragma.usecase.user.ICreateUserUserCase;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,26 +40,19 @@ class UserRouterRestTest {
 	private WebTestClient webTestClient;
 	
 	@MockitoBean
-	private CreateUserUseCase createUserUseCase;
+	private ICreateUserUserCase createUserUseCase;
 	
-	@Autowired
+	@MockitoBean
 	private UserMapper userMapper;
 	
-	@Autowired
+	@MockitoBean
 	private RequestValidator jakartaValidator;
-	@Autowired
-	private GetUserRoleByIdUseCase getUserRoleUseCase;
 	
 	@TestConfiguration
 	static class TestConfig {
 		@Bean
 		public ICreateUserUserCase createUserUseCase() {
 			return Mockito.mock(ICreateUserUserCase.class);
-		}
-		
-		@Bean
-		public IGetUserRoleByIdUseCase getUserRoleUseCase() {
-			return Mockito.mock(GetUserRoleByIdUseCase.class);
 		}
 		
 		@Bean
@@ -74,16 +66,18 @@ class UserRouterRestTest {
 		}
 	}
 	
-	@Test
-	void createUserShouldReturnCreatedUser() {
-		
-		UserRole userRole = UserRole.builder()
+	
+	private UserRole defaultUserRole() {
+		return UserRole.builder()
 			.id(Short.parseShort("1"))
 			.name("CLIENTE")
 			.description("Descripcion cliente")
 			.build();
 		
-		User user = User.builder()
+	}
+	
+	private User defaultUser() {
+		return User.builder()
 			.firstName("John")
 			.lastName("Doe")
 			.birthDate(LocalDate.parse("1995-08-24"))
@@ -91,8 +85,17 @@ class UserRouterRestTest {
 			.phone("3001234567")
 			.email("johndoe@mail.com")
 			.baseSalary(new BigDecimal("2500000"))
-			.role(userRole)
+			.role(defaultUserRole())
 			.build();
+	}
+	
+	
+	@Test
+	@DisplayName("Deberia crear un usuario satisfactoriamente")
+	void createUserShouldReturnCreatedUser() {
+		
+		User user = defaultUser();
+		UserRole userRole = defaultUserRole();
 		
 		CreateUserRequest request = new CreateUserRequest(
 			user.getFirstName(),
@@ -124,13 +127,10 @@ class UserRouterRestTest {
 		when(userMapper.toDomain(request))
 			.thenReturn(user);
 		
-		when(getUserRoleUseCase.execute(any(Short.class)))
-			.thenReturn(Mono.just(userRole));
-		
 		when(createUserUseCase.execute(any(User.class)))
 			.thenReturn(Mono.just(user));
 		
-		when(userMapper.toDto(user))
+		when(userMapper.toDto(any(User.class)))
 			.thenReturn(responseDto);
 		
 		webTestClient.post()

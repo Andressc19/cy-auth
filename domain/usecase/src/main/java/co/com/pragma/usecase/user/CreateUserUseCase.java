@@ -25,13 +25,10 @@ public class CreateUserUseCase implements ICreateUserUserCase{
             return userRepository.existsByEmail(user.getEmail())
                 .filter(exists -> !exists)
                 .switchIfEmpty(Mono.error(new DuplicatedEmailException(user.getEmail())))
-                .then(userRoleRepository.getUserRoleById(user.getRole().getId()))
-                .switchIfEmpty( Mono.error(new RoleNotExistsException(user.getRole().getId())))
-                .flatMap(userRole -> {
-                    user.setRole(userRole);
-                   return userRepository.saveUser(user);
-                });
+                .then(userRoleRepository.existsById(user.getRole().getId()))
+                    .filter(exist -> exist)
+                    .switchIfEmpty(Mono.error(new RoleNotExistsException(user.getRole().getId())))
+                .then(userRepository.saveUser(user));
         });
     }
-
 }

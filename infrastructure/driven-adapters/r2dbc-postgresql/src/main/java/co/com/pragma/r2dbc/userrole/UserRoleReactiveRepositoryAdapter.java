@@ -25,8 +25,7 @@ public class UserRoleReactiveRepositoryAdapter extends ReactiveAdapterOperations
     }
     
     @Override
-    public Mono<UserRole> getUserRoleById(Short roleId) {
-        return repository.findById(roleId)
-            .map(entity -> mapper.map(entity, UserRole.class));
+    public Mono<Boolean> existsById(Short roleId) {
+        return repository.existsById(roleId);
     }
 }

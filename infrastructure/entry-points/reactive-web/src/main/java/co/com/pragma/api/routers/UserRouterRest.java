@@ -49,7 +49,6 @@ public class UserRouterRest {
           )
     })
     public RouterFunction<ServerResponse> userRouterFunction(UserHandler handler) {
-        return route(POST(ApiConstants.USER_PATH), handler::listenPOSTCreateUSer)
-              .filter((request, next) -> next.handle(request));
+        return route(POST(ApiConstants.USER_PATH), handler::listenPOSTCreateUSer);
     }
 }
