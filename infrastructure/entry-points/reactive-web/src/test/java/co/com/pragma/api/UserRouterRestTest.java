@@ -1,5 +1,6 @@
 package co.com.pragma.api;
 
+import co.com.pragma.api.constants.ApiConstants;
 import co.com.pragma.api.dto.request.CreateUserRequest;
 import co.com.pragma.api.dto.response.CreateUserResponse;
 import co.com.pragma.api.handlers.UserHandler;
@@ -30,11 +31,13 @@ import java.time.LocalDate;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-@ContextConfiguration(classes = {UserRouterRest.class, UserHandler.class, UserRouterRestTest.TestConfig.class})
+@ContextConfiguration(classes = {
+	UserRouterRest.class,
+	UserHandler.class,
+	UserRouterRestTest.TestConfig.class }
+)
 @WebFluxTest
 class UserRouterRestTest {
-	
-	private final String API_URL = "/api/v1";
 	
 	@Autowired
 	private WebTestClient webTestClient;
@@ -92,7 +95,7 @@ class UserRouterRestTest {
 	
 	@Test
 	@DisplayName("Deberia crear un usuario satisfactoriamente")
-	void createUserShouldReturnCreatedUser() {
+	void mustCreateUserAndReturnCreatedUser() {
 		
 		User user = defaultUser();
 		UserRole userRole = defaultUserRole();
@@ -134,7 +137,7 @@ class UserRouterRestTest {
 			.thenReturn(responseDto);
 		
 		webTestClient.post()
-			.uri(API_URL + "/usuarios")
+			.uri(ApiConstants.USER_PATH)
 			.accept(MediaType.APPLICATION_JSON)
 			.bodyValue(request)
 			.exchange()
