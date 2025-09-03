@@ -31,16 +31,21 @@ public class UserReactiveRepositoryAdapter extends ReactiveAdapterOperations
 	}
     
     @Override
-    public Mono<Boolean> existsUser(String email, String identificationNumber) {
-        return repository.existsByEmailAndIdentificationNumber(email, identificationNumber);
+    public Mono<Boolean> existByEmailOrIdentification(String email, String identificationNumber) {
+        return repository.existsByEmailOrIdentificationNumber(email, identificationNumber);
+    }
+    
+    @Override
+    public Mono<User> findByEmail(String email) {
+        return repository.findByEmail(email);
     }
     
     @Override
     public Mono<User> saveUser(User user) {
         return save(user)
               .as(transactionalOperator::transactional)
-              .doOnSuccess(saved -> log.info("User saved {}", saved))
-              .doOnError(e -> log.error("Error saving user", e));
+              .doOnSuccess(saved -> log.info("User saved {}", saved.getEmail()))
+              .doOnError(e -> log.error("Error saving user"));
     }
     
     @Override

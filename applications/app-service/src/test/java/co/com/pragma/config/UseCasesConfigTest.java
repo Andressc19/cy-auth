@@ -44,8 +44,13 @@ public class UseCasesConfigTest {
                 }
                 
                 @Override
-                public Mono<Boolean> existsUser(String email, String identificationNumber) {
+                public Mono<Boolean> existByEmailOrIdentification(String email, String identificationNumber) {
                     return Mono.just(true);
+                }
+                
+                @Override
+                public Mono<User> findByEmail(String email) {
+                    return Mono.just(new User());
                 }
             };
         }

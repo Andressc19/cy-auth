@@ -32,11 +32,11 @@ public class UserHandler {
 			.map(userMapper::toDomain)
 			.flatMap(createUserUseCase::execute)
 			.flatMap(user -> {
-				log.info("Checking role: {}", user);
+				log.info("Checking role: {}", user.getEmail());
 				return Mono.just(user);
 			} )
 			.map(userMapper::toDto)
-			.doOnNext(user -> log.info("Created user successfully: {}", user))
+			.doOnNext(user -> log.info("Created user successfully: {}", user.email()))
 			.flatMap(dto -> ServerResponse.status(HttpStatus.CREATED).bodyValue(dto));
 	}
 	

@@ -11,6 +11,6 @@ public class CheckUserExistsUseCase {
 	private final UserRepository userRepository;
 	
 	public Mono<Boolean> execute(String email, String identificationNumber) {
-		return userRepository.existsUser(email, identificationNumber);
+		return userRepository.existByEmailOrIdentification(email, identificationNumber);
 	}
 }

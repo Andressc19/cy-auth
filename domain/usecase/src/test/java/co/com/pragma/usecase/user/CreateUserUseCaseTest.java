@@ -2,7 +2,7 @@ package co.com.pragma.usecase.user;
 
 
 import co.com.pragma.model.user.User;
-import co.com.pragma.model.user.exceptions.DuplicatedEmailException;
+import co.com.pragma.model.user.exceptions.DuplicatedUserException;
 import co.com.pragma.model.user.exceptions.InvalidSalaryException;
 import co.com.pragma.model.user.gateways.UserRepository;
 import co.com.pragma.model.userrole.UserRole;
@@ -59,7 +59,7 @@ public class CreateUserUseCaseTest {
 	void mustSuccessfullyCreateUser() {
 		User user = defaultUser();
 		
-		when(userRepository.existsUser(user.getEmail(), user.getIdentificationNumber()))
+		when(userRepository.existByEmailOrIdentification(user.getEmail(), user.getIdentificationNumber()))
 			.thenReturn(Mono.just(false));
 		
 		when(userRoleRepository.existsById(user.getRole().getId()))
@@ -81,11 +81,11 @@ public class CreateUserUseCaseTest {
 	void mustFailDuplicatedEmailCreateUser() {
 		User user = defaultUser();
 		
-		when(userRepository.existsUser(user.getEmail(), user.getIdentificationNumber()))
+		when(userRepository.existByEmailOrIdentification(user.getEmail(), user.getIdentificationNumber()))
 			.thenReturn(Mono.just(true));
 
 		StepVerifier.create(createUserUseCase.execute(user))
-			.expectErrorMatches(error -> error instanceof DuplicatedEmailException &&
+			.expectErrorMatches(error -> error instanceof DuplicatedUserException &&
 				error.getMessage().contains("email@email.com"))
 			.verify();
 	}
@@ -95,7 +95,7 @@ public class CreateUserUseCaseTest {
 	void mustFailRoleDoesntExist() {
 		User user = defaultUser();
 		
-		when(userRepository.existsUser(user.getEmail(), user.getIdentificationNumber()))
+		when(userRepository.existByEmailOrIdentification(user.getEmail(), user.getIdentificationNumber()))
 			.thenReturn(Mono.just(false));
 		
 		when(userRoleRepository.existsById(user.getRole().getId()))
