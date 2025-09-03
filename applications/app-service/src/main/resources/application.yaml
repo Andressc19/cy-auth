@@ -1,14 +1,40 @@
-##Spring Configuration
 server:
-  port: 8080
+  port: 8081
+  error:
+    include-message: never
 spring:
   application:
-    name: cy-auth
+    name: "cy-auth"
   devtools:
     add-properties: false
   h2:
     console:
       enabled: true
-      path: /h2
+      path: "/h2"
   profiles:
-    include:
+    include: null
+adapters:
+  r2dbc:
+    host: ${DB_HOST}
+    port: ${DB_PORT}
+    database: ${POSTGRES_DB}
+    schema: ${DB_SCHEMA}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,prometheus"
+  endpoint:
+    health:
+      probes:
+        enabled: true
+cors:
+  allowed-origins: "http://localhost:4200,http://localhost:8080"
+
+logging:
+  level:
+    org.springframework.boot.autoconfigure.web.reactive.error.AbstractErrorWebExceptionHandler: OFF
+    org.springframework.web.server.adapter.HttpWebHandlerAdapter: ERROR
