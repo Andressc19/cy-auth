@@ -2,6 +2,7 @@ package co.com.pragma.api.dto.request;
 
 import co.com.pragma.api.decorators.ValidBirthDate;
 import co.com.pragma.api.decorators.ValidIdentificationNumber;
+import co.com.pragma.api.decorators.ValidPassword;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -20,6 +21,11 @@ public record CreateUserRequest(
       @NotBlank(message = "Debe ingresar un apellido válido")
       @Schema(description = "Apellido del usuario", example = "Doe")
       String lastName,
+      
+      @NotBlank
+      @ValidPassword
+      @Schema(description = "Contraseña el usuario", example = "Prueba123!")
+      String password,
       
       @NotBlank(message = "Debe ingresar un número de identificación válido")
       @Schema(description = "Número de identificación", example = "1234567880")
