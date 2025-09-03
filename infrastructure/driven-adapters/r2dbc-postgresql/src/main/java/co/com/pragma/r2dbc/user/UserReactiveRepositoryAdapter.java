@@ -29,12 +29,12 @@ public class UserReactiveRepositoryAdapter extends ReactiveAdapterOperations
         this.transactionalOperator = transactionalOperator;
 		this.userEntityMapper = userEntityMapper;
 	}
-
+    
     @Override
-    public Mono<Boolean> existsByEmail(String email) {
-        return repository.existsByEmail(email);
+    public Mono<Boolean> existsUser(String email, String identificationNumber) {
+        return repository.existsByEmailAndIdentificationNumber(email, identificationNumber);
     }
-
+    
     @Override
     public Mono<User> saveUser(User user) {
         return save(user)

@@ -10,5 +10,4 @@ import org.springframework.context.annotation.FilterType;
                 @ComponentScan.Filter(type = FilterType.REGEX, pattern = "^.+UseCase$")
         },
         useDefaultFilters = false)
-public class UseCasesConfig {
-}
+public class UseCasesConfig {}

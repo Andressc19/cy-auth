@@ -8,12 +8,12 @@ import co.com.pragma.model.user.gateways.UserRepository;
 import co.com.pragma.model.userrole.UserRole;
 import co.com.pragma.model.userrole.exceptions.RoleNotExistsException;
 import co.com.pragma.model.userrole.gateways.UserRoleRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
@@ -22,7 +22,7 @@ import java.time.LocalDate;
 
 import static org.mockito.Mockito.when;
 
-
+@ExtendWith(MockitoExtension.class)
 public class CreateUserUseCaseTest {
 	
 	@InjectMocks
@@ -34,10 +34,6 @@ public class CreateUserUseCaseTest {
 	@Mock
 	private UserRoleRepository userRoleRepository;
 	
-	@BeforeEach
-	void setUp() {
-		MockitoAnnotations.openMocks(this);
-	}
 	
 	// To create a default role for test
 	private UserRole defaultUserRole() {
@@ -63,7 +59,7 @@ public class CreateUserUseCaseTest {
 	void mustSuccessfullyCreateUser() {
 		User user = defaultUser();
 		
-		when(userRepository.existsByEmail(user.getEmail()))
+		when(userRepository.existsUser(user.getEmail(), user.getIdentificationNumber()))
 			.thenReturn(Mono.just(false));
 		
 		when(userRoleRepository.existsById(user.getRole().getId()))
@@ -84,17 +80,10 @@ public class CreateUserUseCaseTest {
 	@DisplayName("Debe fallar por email de usuario duplicado")
 	void mustFailDuplicatedEmailCreateUser() {
 		User user = defaultUser();
-		UserRole userRole = defaultUserRole();
 		
-		when(userRepository.existsByEmail(user.getEmail()))
+		when(userRepository.existsUser(user.getEmail(), user.getIdentificationNumber()))
 			.thenReturn(Mono.just(true));
-		
-		when(userRoleRepository.existsById(userRole.getId()))
-			.thenReturn(Mono.just(true));
-		
-		when(userRepository.saveUser(user))
-			.thenReturn(Mono.just(user));
-		
+
 		StepVerifier.create(createUserUseCase.execute(user))
 			.expectErrorMatches(error -> error instanceof DuplicatedEmailException &&
 				error.getMessage().contains("email@email.com"))
@@ -106,14 +95,11 @@ public class CreateUserUseCaseTest {
 	void mustFailRoleDoesntExist() {
 		User user = defaultUser();
 		
-		when(userRepository.existsByEmail(user.getEmail()))
+		when(userRepository.existsUser(user.getEmail(), user.getIdentificationNumber()))
 			.thenReturn(Mono.just(false));
 		
 		when(userRoleRepository.existsById(user.getRole().getId()))
 			.thenReturn(Mono.just(false));
-		
-		when(userRepository.saveUser(user))
-			.thenReturn(Mono.just(user));
 		
 		StepVerifier.create(createUserUseCase.execute(user))
 			.expectErrorMatches(error -> error instanceof RoleNotExistsException &&
@@ -126,14 +112,6 @@ public class CreateUserUseCaseTest {
 	void mustFailSalaryOverRangeCreateUser() {
 		User user = defaultUser();
 		user.setBaseSalary(new BigDecimal("2000000000"));
-		when(userRepository.existsByEmail(user.getEmail()))
-			.thenReturn(Mono.just(false));
-		
-		when(userRoleRepository.existsById(user.getRole().getId()))
-			.thenReturn(Mono.just(true));
-		
-		when(userRepository.saveUser(user))
-			.thenReturn(Mono.just(user));
 		
 		StepVerifier.create(createUserUseCase.execute(user))
 			.expectErrorMatches(error -> error instanceof InvalidSalaryException)
@@ -145,15 +123,6 @@ public class CreateUserUseCaseTest {
 	void mustFailSalaryInferiorRangeCreateUser() {
 		User user = defaultUser();
 		user.setBaseSalary(new BigDecimal("-100000"));
-		
-		when(userRepository.existsByEmail(user.getEmail()))
-			.thenReturn(Mono.just(false));
-		
-		when(userRoleRepository.existsById(user.getRole().getId()))
-			.thenReturn(Mono.just(true));
-		
-		when(userRepository.saveUser(user))
-			.thenReturn(Mono.just(user));
 		
 		StepVerifier.create(createUserUseCase.execute(user))
 			.expectErrorMatches(error -> error instanceof InvalidSalaryException)

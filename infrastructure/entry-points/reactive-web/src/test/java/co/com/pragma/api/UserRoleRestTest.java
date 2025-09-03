@@ -7,7 +7,7 @@ import co.com.pragma.api.handlers.UserRoleHandler;
 import co.com.pragma.api.mappers.UserRoleMapper;
 import co.com.pragma.api.routers.UserRoleRouterRest;
 import co.com.pragma.model.userrole.UserRole;
-import co.com.pragma.usecase.getuserroleusecase.IGetAllUserRolesUseCase;
+import co.com.pragma.usecase.getuserroleusecase.GetAllUserRolesUseCase;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -26,11 +26,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
 import static org.mockito.ArgumentMatchers.any;
 
-@ContextConfiguration(classes = {
-	UserRoleRouterRest.class,
-	UserRoleHandler.class,
-	UserRoleRestTest.TestConfig.class
-})
+
+@ContextConfiguration(classes = { UserRoleRouterRest.class, UserRoleHandler.class, UserRoleRestTest.TestConfig.class })
 @WebFluxTest
 public class UserRoleRestTest {
 	
@@ -38,7 +35,7 @@ public class UserRoleRestTest {
 	private WebTestClient webClient;
 	
 	@MockitoBean
-	private IGetAllUserRolesUseCase getAllUserRolesUseCase;
+	private GetAllUserRolesUseCase getAllUserRolesUseCase;
 	
 	@MockitoBean
 	private UserRoleMapper userRoleMapper;
@@ -52,8 +49,8 @@ public class UserRoleRestTest {
 	@TestConfiguration
 	static class TestConfig {
 		@Bean
-		public IGetAllUserRolesUseCase getAllUserRolesUseCase() {
-			return Mockito.mock(IGetAllUserRolesUseCase.class);
+		public GetAllUserRolesUseCase getAllUserRolesUseCase() {
+			return Mockito.mock(GetAllUserRolesUseCase.class);
 		}
 		
 		@Bean
@@ -69,7 +66,7 @@ public class UserRoleRestTest {
 	
 	@Test
 	@DisplayName("Deberia retornar varios roles de usuario")
-	void mustReturnAllUserRoles(){
+	void mustReturnAllUserRoles() {
 		
 		Flux<UserRole> fluxUserRoles = Flux.just(
 			new UserRole().toBuilder()

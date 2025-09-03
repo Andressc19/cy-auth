@@ -7,5 +7,6 @@ public final class ApiConstants {
 	public static final String API_PATH = "/api/v1";
 	
 	public static final String USER_PATH = API_PATH + "/usuarios";
+	public static final String USER_EXISTS_PATH = USER_PATH + "/existe";
 	public static final String USER_ROLES_PATH = API_PATH + "/roles";
 }

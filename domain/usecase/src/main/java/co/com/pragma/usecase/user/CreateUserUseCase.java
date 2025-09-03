@@ -11,24 +11,23 @@ import reactor.core.publisher.Mono;
 
 
 @RequiredArgsConstructor
-public class CreateUserUseCase implements ICreateUserUserCase{
-
+public class CreateUserUseCase {
+    
     private final UserRepository userRepository;
     private final UserRoleRepository userRoleRepository;
-    
     
     public Mono<User> execute(User user) {
         return Mono.defer(()-> {
             user.setEmail(user.getEmail().toLowerCase());
             UserValidator.validate(user);
             
-            return userRepository.existsByEmail(user.getEmail())
-                .filter(exists -> !exists)
+            return userRepository.existsUser(user.getEmail(), user.getIdentificationNumber())
+                .filter(userExists -> !userExists)
                 .switchIfEmpty(Mono.error(new DuplicatedEmailException(user.getEmail())))
-                .then(userRoleRepository.existsById(user.getRole().getId()))
+                .flatMap( exists -> userRoleRepository.existsById(user.getRole().getId()))
                     .filter(exist -> exist)
                     .switchIfEmpty(Mono.error(new RoleNotExistsException(user.getRole().getId())))
-                .then(userRepository.saveUser(user));
+                .flatMap( roleExists -> userRepository.saveUser(user));
         });
     }
 }

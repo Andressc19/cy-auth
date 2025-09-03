@@ -7,11 +7,10 @@ import reactor.core.publisher.Flux;
 
 
 @RequiredArgsConstructor
-public class GetAllUserRolesUseCase implements IGetAllUserRolesUseCase {
+public class GetAllUserRolesUseCase {
 	
 	private final UserRoleRepository userRoleRepository;
 	
-	@Override
 	public Flux<UserRole> execute() {
 		return userRoleRepository.getAllUserRoles();
 	}

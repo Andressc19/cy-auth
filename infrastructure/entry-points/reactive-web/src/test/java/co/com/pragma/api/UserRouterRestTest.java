@@ -2,15 +2,17 @@ package co.com.pragma.api;
 
 import co.com.pragma.api.constants.ApiConstants;
 import co.com.pragma.api.dto.request.CreateUserRequest;
+import co.com.pragma.api.dto.request.UserExistsRequest;
 import co.com.pragma.api.dto.response.CreateUserResponse;
+import co.com.pragma.api.dto.response.UserExistsResponse;
 import co.com.pragma.api.handlers.UserHandler;
 import co.com.pragma.api.mappers.UserMapper;
 import co.com.pragma.api.exceptions.RequestValidator;
 import co.com.pragma.api.routers.UserRouterRest;
 import co.com.pragma.model.user.User;
 import co.com.pragma.model.userrole.UserRole;
+import co.com.pragma.usecase.user.CheckUserExistsUseCase;
 import co.com.pragma.usecase.user.CreateUserUseCase;
-import co.com.pragma.usecase.user.ICreateUserUserCase;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -39,11 +41,15 @@ import static org.mockito.Mockito.when;
 @WebFluxTest
 class UserRouterRestTest {
 	
+	
 	@Autowired
 	private WebTestClient webTestClient;
 	
 	@MockitoBean
-	private ICreateUserUserCase createUserUseCase;
+	private CreateUserUseCase createUserUseCase;
+	
+	@MockitoBean
+	private CheckUserExistsUseCase checkUserExistsUseCase;
 	
 	@MockitoBean
 	private UserMapper userMapper;
@@ -51,11 +57,12 @@ class UserRouterRestTest {
 	@MockitoBean
 	private RequestValidator jakartaValidator;
 	
+	
 	@TestConfiguration
 	static class TestConfig {
 		@Bean
-		public ICreateUserUserCase createUserUseCase() {
-			return Mockito.mock(ICreateUserUserCase.class);
+		public CreateUserUseCase createUserUseCase() {
+			return Mockito.mock(CreateUserUseCase.class);
 		}
 		
 		@Bean
@@ -66,6 +73,11 @@ class UserRouterRestTest {
 		@Bean
 		public RequestValidator jakartaValidator() {
 			return Mockito.mock(RequestValidator.class);
+		}
+		
+		@Bean
+		public CheckUserExistsUseCase checkUserExistsUseCase() {
+			return Mockito.mock(CheckUserExistsUseCase.class);
 		}
 	}
 	
@@ -148,6 +160,52 @@ class UserRouterRestTest {
 				Assertions.assertThat(response.firstName()).isEqualTo("John");
 				}
 			);
+	}
+	
+	@Test
+	void mustExistsAnUserByEmailAndIdentificationNumber() {
+
+		String email = "johndoe@mail.com";
+		String identificationNumber = "1234567";
+		
+		UserExistsRequest request = new UserExistsRequest(email, identificationNumber);
+		
+		when(checkUserExistsUseCase.execute(any(String.class), any(String.class)))
+			.thenReturn(Mono.just(true));
+		
+		webTestClient.post()
+			.uri(ApiConstants.USER_EXISTS_PATH)
+			.accept(MediaType.APPLICATION_JSON)
+			.bodyValue(request)
+			.exchange()
+			.expectStatus().isOk()
+			.expectBody(UserExistsResponse.class)
+			.value(response -> {
+				Assertions.assertThat(response.exists()).isEqualTo(true);
+			});
+	}
+	
+	@Test
+	void mustFailedExistsAnUserByEmailAndIdentificationNumber() {
+		
+		String email = "johndoe@mail.com";
+		String identificationNumber = "1234567";
+		
+		UserExistsRequest request = new UserExistsRequest(email, identificationNumber);
+		
+		when(checkUserExistsUseCase.execute(any(String.class), any(String.class)))
+			.thenReturn(Mono.just(false));
+		
+		webTestClient.post()
+			.uri(ApiConstants.USER_EXISTS_PATH)
+			.accept(MediaType.APPLICATION_JSON)
+			.bodyValue(request)
+			.exchange()
+			.expectStatus().isOk()
+			.expectBody(UserExistsResponse.class)
+			.value(response -> {
+				Assertions.assertThat(response.exists()).isEqualTo(false);
+			});
 	}
 	
 }

@@ -39,11 +39,13 @@ public class UseCasesConfigTest {
         public UserRepository userRepository() {
             return new UserRepository() {
                 @Override
-                public Mono<User> saveUser(User user) { return Mono.just(user); }
+                public Mono<User> saveUser(User user) {
+                    return Mono.just(user);
+                }
                 
                 @Override
-                public Mono<Boolean> existsByEmail(String email) {
-                    return Mono.just(false);
+                public Mono<Boolean> existsUser(String email, String identificationNumber) {
+                    return Mono.just(true);
                 }
             };
         }

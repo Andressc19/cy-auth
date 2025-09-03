@@ -49,6 +49,7 @@ public record CreateUserRequest(
       @Schema(description = "Salario base", example = "2500000")
       BigDecimal baseSalary,
       
-      @NotNull(message = "Debe ingresar un rol valida")
+      @NotNull(message = "Debe ingresar un rol valido")
+      @Schema(description = "Rol", example="1")
       Short role
 ) {}
