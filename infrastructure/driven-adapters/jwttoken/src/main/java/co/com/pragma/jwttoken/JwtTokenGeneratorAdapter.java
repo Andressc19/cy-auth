@@ -10,6 +10,7 @@ import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class JwtTokenGeneratorAdapter implements JwtTokenGenerator {
@@ -23,7 +24,7 @@ public class JwtTokenGeneratorAdapter implements JwtTokenGenerator {
 	}
 	
 	@Override
-	public Mono<String> generateAccessToken(String email, String roleName) {
+	public Mono<String> generateAccessToken(String email, List<String> roles) {
 		return Mono.fromCallable(() -> {
 			
 			Instant now = Instant.now();
@@ -31,7 +32,7 @@ public class JwtTokenGeneratorAdapter implements JwtTokenGenerator {
 			
 			return Jwts.builder()
 				.subject(email)
-				.claim("role", roleName)
+				.claim("roles", roles)
 				.issuedAt(new Date())
 				.expiration(Date.from(expiry))
 				.signWith(key)
@@ -39,18 +40,38 @@ public class JwtTokenGeneratorAdapter implements JwtTokenGenerator {
 		});
 	}
 	
+	// Get Email from token
 	@Override
 	public Mono<String> getEmailFromToken(String token) {
+		return Mono.fromCallable(() -> parseToken(token).getSubject());
+	}
+	
+	@Override
+	public Mono<List<String>> getRolesFromToken(String token) {
 		return Mono.fromCallable(() -> {
-				Claims claims = Jwts.parser()
-					.verifyWith(key)
-					.build()
-					.parseSignedClaims(token)
-					.getPayload();
-				
-				return claims.getSubject();
+			Object rolesClaim = parseToken(token).get("roles");
+			if (rolesClaim instanceof String role) {
+				return List.of(role);
+			} else if (rolesClaim instanceof List<?> list) {
+				return list.stream()
+					.map(Object::toString)
+					.toList();
+			} else {
+				return List.of();
 			}
-		);
+		});
+	}
+	
+	// To get Claims
+	private Claims parseToken(String token) {
+		if(token.startsWith("Bearer")) {
+			token = token.substring(7);
+		}
+		return Jwts.parser()
+			.verifyWith(key)
+			.build()
+			.parseSignedClaims(token)
+			.getPayload();
 	}
 	
 	@Override
@@ -71,5 +92,4 @@ public class JwtTokenGeneratorAdapter implements JwtTokenGenerator {
 		
 		);
 	}
-	
 }

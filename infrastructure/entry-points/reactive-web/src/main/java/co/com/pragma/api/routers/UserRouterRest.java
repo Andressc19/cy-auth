@@ -2,7 +2,6 @@ package co.com.pragma.api.routers;
 
 import co.com.pragma.api.constants.ApiConstants;
 import co.com.pragma.api.dto.request.CreateUserRequest;
-import co.com.pragma.api.dto.request.UserExistsRequest;
 import co.com.pragma.api.handlers.UserHandler;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -16,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
+import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
 import static org.springframework.web.reactive.function.server.RequestPredicates.POST;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 
@@ -42,22 +42,17 @@ public class UserRouterRest {
 		),
 		@RouterOperation(
 			path = ApiConstants.USER_EXISTS_PATH,
-			beanMethod = "listenPOSTExistsUser",
-			method = RequestMethod.POST,
+			beanMethod = "listenGETExistsUser",
+			method = RequestMethod.GET,
 			operation = @Operation(
 				tags = "usuario",
 				operationId = "existsUser",
-				summary = "Verifica si un usuario existe por email e identificación",
-				requestBody = @RequestBody(
-					content = @Content(
-						schema = @Schema(implementation = UserExistsRequest.class)
-					)
-				)
+				summary = "Verifica si un usuario existe por email e identificación"
 			)
 		)
 	})
 	public RouterFunction<ServerResponse> userRouterFunction(UserHandler handler) {
 		return route(POST(ApiConstants.USER_PATH), handler::listenPOSTCreateUSer)
-			.andRoute(POST(ApiConstants.USER_EXISTS_PATH), handler::listenPOSTExistsUser);
+			.andRoute(GET(ApiConstants.USER_EXISTS_PATH), handler::listenGETExistsUser);
 	}
 }

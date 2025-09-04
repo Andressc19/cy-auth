@@ -10,6 +10,8 @@ import co.com.pragma.model.userrole.gateways.UserRoleRepository;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
 
 @RequiredArgsConstructor
 public class AuthenticateUserUseCase {
@@ -29,7 +31,7 @@ public class AuthenticateUserUseCase {
 			)
 			.flatMap(user -> userRoleRepository.findById(user.getRole().getId())
 				.switchIfEmpty(Mono.error(new RoleNotExistsException(user.getRole().getId())))
-				.flatMap(userRole -> jwtTokenGenerator.generateAccessToken(user.getEmail(), userRole.getName()))
+				.flatMap(userRole -> jwtTokenGenerator.generateAccessToken(user.getEmail(), List.of(userRole.getName())))
 			);
 	}
 }

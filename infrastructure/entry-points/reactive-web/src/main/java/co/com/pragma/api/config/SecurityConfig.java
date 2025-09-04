@@ -46,14 +46,14 @@ public class SecurityConfig {
 			.permitAll()
 			.pathMatchers(ApiConstants.USER_PATH)
 				.hasAnyRole(
-					RoleType.ADMIN.name(),
-					RoleType.ADVISOR.name()
+					RoleType.ADMIN.getName(),
+					RoleType.ADVISOR.getName()
 				)
 			.pathMatchers(ApiConstants.USER_EXISTS_PATH)
 				.hasAnyRole(
-					RoleType.ADMIN.name(),
-					RoleType.CUSTOMER.name(),
-					RoleType.ADVISOR.name()
+					RoleType.ADMIN.getName(),
+					RoleType.CUSTOMER.getName(),
+					RoleType.ADVISOR.getName()
 				)
 			.anyExchange()
 			.authenticated();

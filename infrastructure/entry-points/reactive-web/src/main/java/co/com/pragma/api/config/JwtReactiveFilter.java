@@ -28,22 +28,28 @@ public class JwtReactiveFilter implements WebFilter {
 		if (authHeader != null && authHeader.startsWith("Bearer ")) {
 			String token = authHeader.substring(7);
 			
-			return jwtTokenGenerator.validateToken(token)
+ 			return jwtTokenGenerator.validateToken(token)
 				.flatMap(isValid -> {
 					if (!isValid) {
 						return chain.filter(exchange);
 					}
 					
 					return jwtTokenGenerator.getEmailFromToken(token)
-						.flatMap(roleId -> jwtTokenGenerator.getEmailFromToken(token)
-							.map(email -> {
-								List<SimpleGrantedAuthority> authorities =
-									List.of(new SimpleGrantedAuthority(roleId));
-								return new UsernamePasswordAuthenticationToken(email, null, authorities);
-							})
-						)
-						.flatMap(auth -> chain.filter(exchange)
-							.contextWrite(ReactiveSecurityContextHolder.withAuthentication(auth)));
+						.zipWith(jwtTokenGenerator.getRolesFromToken(token))
+						.flatMap(tuple -> {
+							String email = tuple.getT1();
+							List<String> roles = tuple.getT2();
+							
+							List<SimpleGrantedAuthority> authorities = roles.stream()
+								.map(role -> new SimpleGrantedAuthority("ROLE_" + role))
+								.toList();
+							
+							UsernamePasswordAuthenticationToken auth =
+								new UsernamePasswordAuthenticationToken(email, null, authorities);
+							
+							return chain.filter(exchange)
+								.contextWrite(ReactiveSecurityContextHolder.withAuthentication(auth));
+						});
 				});
 		}
 		

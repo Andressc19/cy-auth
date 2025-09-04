@@ -6,6 +6,7 @@ import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import reactor.core.publisher.Mono;
 
 public interface UserReactiveRepository extends ReactiveCrudRepository<UserEntity, Long>, ReactiveQueryByExampleExecutor<UserEntity> {
-	Mono<Boolean> existsByEmailOrIdentificationNumber(String email, String identificationNumber);
 	Mono<UserEntity> findByEmail(String email);
+	Mono<Boolean> existsByEmail(String email);
+	Mono<Boolean> existsByEmailOrIdentificationNumber(String email, String identificationNumber);
 }
