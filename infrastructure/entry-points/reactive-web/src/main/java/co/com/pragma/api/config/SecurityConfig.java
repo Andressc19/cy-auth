@@ -45,7 +45,10 @@ public class SecurityConfig {
 			.pathMatchers(WHITE_LIST)
 			.permitAll()
 			.pathMatchers(ApiConstants.USER_PATH)
-				.hasRole(RoleType.ADMIN.name())
+				.hasAnyRole(
+					RoleType.ADMIN.name(),
+					RoleType.ADVISOR.name()
+				)
 			.pathMatchers(ApiConstants.USER_EXISTS_PATH)
 				.hasAnyRole(
 					RoleType.ADMIN.name(),
