@@ -25,14 +25,21 @@ public class JwtReactiveFilter implements WebFilter {
 		if (authHeader != null && authHeader.startsWith("Bearer ")) {
 			String token = authHeader.substring(7);
 			
-			if (jwtTokenGenerator.validateToken(token)) {
-				String username = jwtTokenGenerator.getEmailFromToken(token);
-				UsernamePasswordAuthenticationToken auth =
-					new UsernamePasswordAuthenticationToken(username, null, null);
-				
-				return chain.filter(exchange)
-					.contextWrite(ReactiveSecurityContextHolder.withAuthentication(auth));
-			}
+			return jwtTokenGenerator.validateToken(token)
+				.flatMap(isValid -> {
+					if (!isValid) {
+						return chain.filter(exchange);
+					}
+					
+					return jwtTokenGenerator.getEmailFromToken(token)
+						.flatMap(username -> {
+							UsernamePasswordAuthenticationToken auth =
+								new UsernamePasswordAuthenticationToken(username, null, null);
+							
+							return chain.filter(exchange)
+								.contextWrite(ReactiveSecurityContextHolder.withAuthentication(auth));
+						});
+				});
 		}
 		
 		return chain.filter(exchange);

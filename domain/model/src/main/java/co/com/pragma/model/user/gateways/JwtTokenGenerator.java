@@ -1,7 +1,9 @@
 package co.com.pragma.model.user.gateways;
 
+import reactor.core.publisher.Mono;
+
 public interface JwtTokenGenerator {
-	String generateAccessToken(String email);
-	String getEmailFromToken(String token);
-	Boolean validateToken(String token);
+	Mono<String> generateAccessToken(String email, Short roleId);
+	Mono<String> getEmailFromToken(String token);
+	Mono<Boolean> validateToken(String token);
 }

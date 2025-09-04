@@ -19,11 +19,13 @@ public class AuthenticateUserUseCase {
 	public Mono<String> execute(String email, String password) {
 		return userRepository.findByEmail(email)
 			.switchIfEmpty(Mono.error(new UserNotFoundException(email)))
-			.flatMap( user ->
-				passwordEncryptor.matches(password, user.getPassword())
-					.filter(isAuth -> isAuth)
-					.switchIfEmpty(Mono.error(new InvalidCredentialsException()))
+			.flatMap(user -> passwordEncryptor.matches(password, user.getPassword())
+				.filter(isAuth -> isAuth)
+				.switchIfEmpty(Mono.error(new InvalidCredentialsException()))
+				.thenReturn(user)
 			)
-			.thenReturn(jwtTokenGenerator.generateAccessToken(email));
+			.flatMap(user ->
+					jwtTokenGenerator.generateAccessToken(user.getEmail(), user.getRole().getId())
+			);
 	}
 }

@@ -4,6 +4,7 @@ import co.com.pragma.model.user.gateways.JwtTokenGenerator;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
@@ -22,43 +23,53 @@ public class JwtTokenGeneratorAdapter implements JwtTokenGenerator {
 	}
 	
 	@Override
-	public String generateAccessToken(String email) {
-		Instant now = Instant.now();
-		Instant expiry = now.plusSeconds(Long.parseLong(properties.expires()));
-		
-		return Jwts.builder()
-			.subject(email)
-			.claim("type", "access")
-			.issuedAt(new Date())
-			.expiration(Date.from(expiry))
-			.signWith(key)
-			.compact();
-	}
-	
-	@Override
-	public String getEmailFromToken(String token) {
-		Claims claims = Jwts.parser()
-			.verifyWith(key)
-			.build()
-			.parseSignedClaims(token)
-			.getPayload();
-		
-		return claims.getSubject();
-	}
-	
-	@Override
-	public Boolean validateToken(String token) {
-		try {
-			Jws<Claims> claimsJwt = Jwts.parser()
-				.verifyWith(key)
-				.build()
-				.parseSignedClaims(token);
+	public Mono<String> generateAccessToken(String email, Short roleId) {
+		return Mono.fromCallable(() -> {
 			
-			Date expiration = claimsJwt.getPayload().getExpiration();
-			return !expiration.before(new Date());
-		} catch (Exception e) {
-			return false;
-		}
+			Instant now = Instant.now();
+			Instant expiry = now.plusSeconds(Long.parseLong(properties.expires()));
+			
+			return Jwts.builder()
+				.subject(email)
+				.claim("role", roleId)
+				.issuedAt(new Date())
+				.expiration(Date.from(expiry))
+				.signWith(key)
+				.compact();
+		});
+	}
+	
+	@Override
+	public Mono<String> getEmailFromToken(String token) {
+		return Mono.fromCallable(() -> {
+				Claims claims = Jwts.parser()
+					.verifyWith(key)
+					.build()
+					.parseSignedClaims(token)
+					.getPayload();
+				
+				return claims.getSubject();
+			}
+		);
+	}
+	
+	@Override
+	public Mono<Boolean> validateToken(String token) {
+		return Mono.fromCallable(() -> {
+				try {
+					Jws<Claims> claimsJwt = Jwts.parser()
+						.verifyWith(key)
+						.build()
+						.parseSignedClaims(token);
+					
+					Date expiration = claimsJwt.getPayload().getExpiration();
+					return !expiration.before(new Date());
+				} catch (Exception e) {
+					return false;
+				}
+			}
+		
+		);
 	}
 	
 }

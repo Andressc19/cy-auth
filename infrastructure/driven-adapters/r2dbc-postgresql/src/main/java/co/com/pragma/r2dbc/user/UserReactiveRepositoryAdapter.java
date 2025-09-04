@@ -20,12 +20,11 @@ public class UserReactiveRepositoryAdapter extends ReactiveAdapterOperations
     private final UserEntityMapper userEntityMapper;
 
     public UserReactiveRepositoryAdapter(
-        UserReactiveRepository repository,
-        ObjectMapper mapper,
-        TransactionalOperator transactionalOperator,
-        UserEntityMapper userEntityMapper
-    ) {
-        super(repository, mapper,  userEntityMapper::toDomain);
+		UserReactiveRepository repository,
+		ObjectMapper mapper,
+		TransactionalOperator transactionalOperator, UserEntityMapper userEntityMapper
+	) {
+        super(repository, mapper, d -> mapper.map(d, User.class));
         this.transactionalOperator = transactionalOperator;
 		this.userEntityMapper = userEntityMapper;
 	}
@@ -37,7 +36,8 @@ public class UserReactiveRepositoryAdapter extends ReactiveAdapterOperations
     
     @Override
     public Mono<User> findByEmail(String email) {
-        return repository.findByEmail(email);
+        return repository.findByEmail(email)
+			.map(userEntityMapper::toDomain);
     }
     
     @Override
@@ -46,10 +46,5 @@ public class UserReactiveRepositoryAdapter extends ReactiveAdapterOperations
               .as(transactionalOperator::transactional)
               .doOnSuccess(saved -> log.info("User saved {}", saved.getEmail()))
               .doOnError(e -> log.error("Error saving user"));
-    }
-    
-    @Override
-    protected UserEntity toData(User user) {
-        return userEntityMapper.toEntity(user);
     }
 }
