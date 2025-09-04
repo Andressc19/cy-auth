@@ -23,7 +23,7 @@ public class JwtTokenGeneratorAdapter implements JwtTokenGenerator {
 	}
 	
 	@Override
-	public Mono<String> generateAccessToken(String email, Short roleId) {
+	public Mono<String> generateAccessToken(String email, String roleName) {
 		return Mono.fromCallable(() -> {
 			
 			Instant now = Instant.now();
@@ -31,7 +31,7 @@ public class JwtTokenGeneratorAdapter implements JwtTokenGenerator {
 			
 			return Jwts.builder()
 				.subject(email)
-				.claim("role", roleId)
+				.claim("role", roleName)
 				.issuedAt(new Date())
 				.expiration(Date.from(expiry))
 				.signWith(key)

@@ -5,6 +5,8 @@ import co.com.pragma.model.user.exceptions.UserNotFoundException;
 import co.com.pragma.model.user.gateways.JwtTokenGenerator;
 import co.com.pragma.model.user.gateways.PasswordEncryptor;
 import co.com.pragma.model.user.gateways.UserRepository;
+import co.com.pragma.model.userrole.exceptions.RoleNotExistsException;
+import co.com.pragma.model.userrole.gateways.UserRoleRepository;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 
@@ -13,6 +15,7 @@ import reactor.core.publisher.Mono;
 public class AuthenticateUserUseCase {
 	
 	private final UserRepository userRepository;
+	private final UserRoleRepository userRoleRepository;
 	private final PasswordEncryptor passwordEncryptor;
 	private final JwtTokenGenerator jwtTokenGenerator;
 	
@@ -24,8 +27,9 @@ public class AuthenticateUserUseCase {
 				.switchIfEmpty(Mono.error(new InvalidCredentialsException()))
 				.thenReturn(user)
 			)
-			.flatMap(user ->
-					jwtTokenGenerator.generateAccessToken(user.getEmail(), user.getRole().getId())
+			.flatMap(user -> userRoleRepository.findById(user.getRole().getId())
+				.switchIfEmpty(Mono.error(new RoleNotExistsException(user.getRole().getId())))
+				.flatMap(userRole -> jwtTokenGenerator.generateAccessToken(user.getEmail(), userRole.getName()))
 			);
 	}
 }

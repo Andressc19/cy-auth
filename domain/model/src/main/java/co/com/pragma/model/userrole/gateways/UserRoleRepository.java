@@ -8,5 +8,5 @@ import reactor.core.publisher.Mono;
 public interface UserRoleRepository {
 	Flux<UserRole> getAllUserRoles();
 	Mono<Boolean> existsById(Short roleId);
-	
+	Mono<UserRole> findById(Short roleId);
 }

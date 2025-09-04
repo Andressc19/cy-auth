@@ -4,12 +4,15 @@ import co.com.pragma.model.user.gateways.JwtTokenGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 
 @Component
@@ -32,13 +35,15 @@ public class JwtReactiveFilter implements WebFilter {
 					}
 					
 					return jwtTokenGenerator.getEmailFromToken(token)
-						.flatMap(username -> {
-							UsernamePasswordAuthenticationToken auth =
-								new UsernamePasswordAuthenticationToken(username, null, null);
-							
-							return chain.filter(exchange)
-								.contextWrite(ReactiveSecurityContextHolder.withAuthentication(auth));
-						});
+						.flatMap(roleId -> jwtTokenGenerator.getEmailFromToken(token)
+							.map(email -> {
+								List<SimpleGrantedAuthority> authorities =
+									List.of(new SimpleGrantedAuthority(roleId));
+								return new UsernamePasswordAuthenticationToken(email, null, authorities);
+							})
+						)
+						.flatMap(auth -> chain.filter(exchange)
+							.contextWrite(ReactiveSecurityContextHolder.withAuthentication(auth)));
 				});
 		}
 		

@@ -1,6 +1,7 @@
 package co.com.pragma.api.config;
 
 import co.com.pragma.api.constants.ApiConstants;
+import co.com.pragma.api.enums.RoleType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,13 +35,24 @@ public class SecurityConfig {
 			.formLogin(ServerHttpSecurity.FormLoginSpec::disable)
 			.exceptionHandling( exceptions -> exceptions
 				.authenticationEntryPoint(new HttpStatusServerEntryPoint(HttpStatus.UNAUTHORIZED)))
-			.authorizeExchange(exchanges -> exchanges
-				.pathMatchers(WHITE_LIST)
-				.permitAll()
-				.anyExchange()
-				.authenticated()
-			)
+			.authorizeExchange(this::setAuthorizationRoles)
 			.addFilterAt(jwtReactiveFilter, SecurityWebFiltersOrder.AUTHENTICATION)
 			.build();
+	}
+	
+	private void setAuthorizationRoles (ServerHttpSecurity.AuthorizeExchangeSpec exchangeSpec) {
+		exchangeSpec
+			.pathMatchers(WHITE_LIST)
+			.permitAll()
+			.pathMatchers(ApiConstants.USER_PATH)
+				.hasRole(RoleType.ADMIN.name())
+			.pathMatchers(ApiConstants.USER_EXISTS_PATH)
+				.hasAnyRole(
+					RoleType.ADMIN.name(),
+					RoleType.CUSTOMER.name(),
+					RoleType.ADVISOR.name()
+				)
+			.anyExchange()
+			.authenticated();
 	}
 }
