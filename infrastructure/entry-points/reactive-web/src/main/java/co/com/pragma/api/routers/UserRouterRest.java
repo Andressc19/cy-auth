@@ -29,6 +29,7 @@ public class UserRouterRest {
 			beanMethod = "listenPOSTCreateUSer",
 			method = RequestMethod.POST,
 			operation = @Operation(
+				tags = "usuario",
 				operationId = "createUser",
 				summary = "Crea un nuevo usuario",
 				requestBody = @RequestBody(
@@ -44,10 +45,10 @@ public class UserRouterRest {
 			beanMethod = "listenPOSTExistsUser",
 			method = RequestMethod.POST,
 			operation = @Operation(
+				tags = "usuario",
 				operationId = "existsUser",
 				summary = "Verifica si un usuario existe por email e identificación",
 				requestBody = @RequestBody(
-					required = true,
 					content = @Content(
 						schema = @Schema(implementation = UserExistsRequest.class)
 					)

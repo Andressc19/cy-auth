@@ -30,6 +30,7 @@ public class UserRoleRouterRest {
 			beanMethod = "listenGETAllUserRoles",
 			method = RequestMethod.GET,
 			operation = @Operation(
+				tags = "rol-usuario",
 				operationId = "getAllUserRoles",
 				summary = "Obtiene todos los roles",
 				responses = {

@@ -13,6 +13,7 @@ spring:
       path: "/h2"
   profiles:
     include: null
+
 adapters:
   r2dbc:
     host: ${DB_HOST}
@@ -21,6 +22,16 @@ adapters:
     schema: ${DB_SCHEMA}
     username: ${POSTGRES_USER}
     password: ${POSTGRES_PASSWORD}
+
+  jwt:
+    secret: "Zy+cGYfgATuD3hmeNngokuHwOz8zI1g3ExtzOuNV6ZuOY="
+    issuer: ""
+    audience: ""
+    expires: 3600
+
+springdoc:
+  swagger-ui:
+    path: "/swagger-ui"
 
 management:
   endpoints:
@@ -32,7 +43,7 @@ management:
       probes:
         enabled: true
 cors:
-  allowed-origins: "http://localhost:4200,http://localhost:8080"
+  allowed-origins: "http://localhost:4200,http://localhost:8081"
 
 logging:
   level:

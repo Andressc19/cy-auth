@@ -1,6 +1,8 @@
 package co.com.pragma.usecase.user;
 
+import co.com.pragma.model.user.exceptions.InvalidCredentialsException;
 import co.com.pragma.model.user.exceptions.UserNotFoundException;
+import co.com.pragma.model.user.gateways.JwtTokenGenerator;
 import co.com.pragma.model.user.gateways.PasswordEncryptor;
 import co.com.pragma.model.user.gateways.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,12 +14,16 @@ public class AuthenticateUserUseCase {
 	
 	private final UserRepository userRepository;
 	private final PasswordEncryptor passwordEncryptor;
+	private final JwtTokenGenerator jwtTokenGenerator;
 	
-	public Mono<Boolean> execute(String email, String password) {
+	public Mono<String> execute(String email, String password) {
 		return userRepository.findByEmail(email)
 			.switchIfEmpty(Mono.error(new UserNotFoundException(email)))
 			.flatMap( user ->
 				passwordEncryptor.matches(password, user.getPassword())
-			);
+					.filter(isAuth -> isAuth)
+					.switchIfEmpty(Mono.error(new InvalidCredentialsException()))
+			)
+			.thenReturn(jwtTokenGenerator.generateAccessToken(email));
 	}
 }

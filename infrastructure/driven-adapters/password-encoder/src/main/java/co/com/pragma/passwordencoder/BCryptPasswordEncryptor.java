@@ -1,4 +1,4 @@
-package co.com.pragma.security;
+package co.com.pragma.passwordencoder;
 
 import co.com.pragma.model.user.gateways.PasswordEncryptor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;

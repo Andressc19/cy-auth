@@ -95,6 +95,7 @@ class UserRouterRestTest {
 		return User.builder()
 			.firstName("John")
 			.lastName("Doe")
+			.password("Prueba123!")
 			.birthDate(LocalDate.parse("1995-08-24"))
 			.address("Cra 123 #45-67")
 			.phone("3001234567")
@@ -115,6 +116,7 @@ class UserRouterRestTest {
 		CreateUserRequest request = new CreateUserRequest(
 			user.getFirstName(),
 			user.getLastName(),
+			user.getPassword(),
 			user.getIdentificationNumber(),
 			user.getBirthDate().toString(),
 			user.getAddress(),
@@ -208,4 +210,8 @@ class UserRouterRestTest {
 			});
 	}
 	
+	
+	//	@Test
+	// TODO Validate when password doesnt pass security
+
 }

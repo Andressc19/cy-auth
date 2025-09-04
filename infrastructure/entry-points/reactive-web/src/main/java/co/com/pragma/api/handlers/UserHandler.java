@@ -25,6 +25,7 @@ public class UserHandler {
 	private final UserMapper userMapper;
 	private final RequestValidator jakartaValidator;
 	
+	
 	public Mono<ServerResponse> listenPOSTCreateUSer(ServerRequest request) {
 		return request.bodyToMono(CreateUserRequest.class)
 			.doOnNext(req -> log.info("Attempting to create user: {}", req.email()))
@@ -40,7 +41,6 @@ public class UserHandler {
 			.flatMap(dto -> ServerResponse.status(HttpStatus.CREATED).bodyValue(dto));
 	}
 	
-	
 	public Mono<ServerResponse> listenPOSTExistsUser(ServerRequest request) {
 		return request.bodyToMono(UserExistsRequest.class)
 			.doOnNext(req -> log.info("Attempting to check user exists: email {} identification {}",
@@ -50,4 +50,5 @@ public class UserHandler {
 			.flatMap(exist -> ServerResponse.ok()
 				.bodyValue(new UserExistsResponse(exist)));
 	}
+
 }
