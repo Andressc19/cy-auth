@@ -14,6 +14,6 @@ public class CheckUserExistsUseCase {
 	
 	public Mono<Boolean> execute(String jwtToken) {
 		return jwtTokenGenerator.getEmailFromToken(jwtToken)
-			.flatMap(userRepository::existByEmail);
+			.flatMap(userRepository::existsByEmail);
 	}
 }

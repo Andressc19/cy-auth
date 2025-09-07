@@ -24,7 +24,7 @@ public class CreateUserUseCase {
 			user.setEmail(user.getEmail().toLowerCase());
 			UserValidator.validate(user);
 			
-			return userRepository.existByEmailOrIdentification(user.getEmail(), user.getIdentificationNumber())
+			return userRepository.existsByEmailOrIdentification(user.getEmail(), user.getIdentificationNumber())
 				.filter(userExists -> !userExists)
 				.switchIfEmpty(Mono.error(new DuplicatedUserException()))
 				.flatMap(exists -> userRoleRepository.existsById(user.getRole().getId()))

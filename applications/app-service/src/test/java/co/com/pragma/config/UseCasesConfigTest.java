@@ -44,12 +44,12 @@ public class UseCasesConfigTest {
                 }
                 
                 @Override
-                public Mono<Boolean> existByEmailOrIdentification(String email, String identificationNumber) {
+                public Mono<Boolean> existsByEmailOrIdentification(String email, String identificationNumber) {
                     return Mono.just(true);
                 }
                 
                 @Override
-                public Mono<Boolean> existByEmail(String email) {
+                public Mono<Boolean> existsByEmail(String email) {
                     return Mono.just(true);
                 }
                 

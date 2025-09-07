@@ -59,7 +59,7 @@ public class CreateUserUseCaseTest {
 	void mustSuccessfullyCreateUser() {
 		User user = defaultUser();
 		
-		when(userRepository.existByEmailOrIdentification(user.getEmail(), user.getIdentificationNumber()))
+		when(userRepository.existsByEmailOrIdentification(user.getEmail(), user.getIdentificationNumber()))
 			.thenReturn(Mono.just(false));
 		
 		when(userRoleRepository.existsById(user.getRole().getId()))
@@ -81,7 +81,7 @@ public class CreateUserUseCaseTest {
 	void mustFailDuplicatedEmailCreateUser() {
 		User user = defaultUser();
 		
-		when(userRepository.existByEmailOrIdentification(user.getEmail(), user.getIdentificationNumber()))
+		when(userRepository.existsByEmailOrIdentification(user.getEmail(), user.getIdentificationNumber()))
 			.thenReturn(Mono.just(true));
 
 		StepVerifier.create(createUserUseCase.execute(user))
@@ -95,7 +95,7 @@ public class CreateUserUseCaseTest {
 	void mustFailRoleDoesntExist() {
 		User user = defaultUser();
 		
-		when(userRepository.existByEmailOrIdentification(user.getEmail(), user.getIdentificationNumber()))
+		when(userRepository.existsByEmailOrIdentification(user.getEmail(), user.getIdentificationNumber()))
 			.thenReturn(Mono.just(false));
 		
 		when(userRoleRepository.existsById(user.getRole().getId()))

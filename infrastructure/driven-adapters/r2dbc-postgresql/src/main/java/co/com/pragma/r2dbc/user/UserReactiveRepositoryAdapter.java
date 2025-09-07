@@ -30,12 +30,12 @@ public class UserReactiveRepositoryAdapter extends ReactiveAdapterOperations
 	}
     
     @Override
-    public Mono<Boolean> existByEmail(String email) {
+    public Mono<Boolean> existsByEmail(String email) {
         return repository.existsByEmail(email);
     }
 	
 	@Override
-	public Mono<Boolean> existByEmailOrIdentification(String email, String identificationNumber) {
+	public Mono<Boolean> existsByEmailOrIdentification(String email, String identificationNumber) {
 		return repository.existsByEmailOrIdentificationNumber(email, identificationNumber);
 	}
 	
